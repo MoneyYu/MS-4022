@@ -77,6 +77,12 @@ Describe "SharePoint seed helpers" {
         $delays.Count | Should Be 2
     }
 
+    It "preserves a group creation failure when the retry lookup also fails" {
+        $engineText = Get-Content (Join-Path $PSScriptRoot "..\seed-data\engine\Invoke-SeedSharePoint.ps1") -Raw
+
+        $engineText | Should Match '(?s)try\s*\{\s*\$existingGroup = Get-ExistingGroupWithRetry.*?\}\s*catch\s*\{\s*throw \$creationFailure\s*\}'
+    }
+
     It "returns only desired directory object URIs missing from a group relationship" {
         $desiredUris = @(
             "https://graph.microsoft.com/v1.0/users/admin-id",

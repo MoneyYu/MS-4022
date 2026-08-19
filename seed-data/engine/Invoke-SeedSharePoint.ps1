@@ -101,7 +101,11 @@ function Get-OrCreate-Group {
         return Invoke-SeedGraphRequest -Method POST -Uri "https://graph.microsoft.com/v1.0/groups" -Body $body
     } catch {
         $creationFailure = $_
-        $existingGroup = Get-ExistingGroupWithRetry -Alias $Site.alias -GetGroup $getGroup
+        try {
+            $existingGroup = Get-ExistingGroupWithRetry -Alias $Site.alias -GetGroup $getGroup
+        } catch {
+            throw $creationFailure
+        }
         if (-not $existingGroup) {
             throw $creationFailure
         }

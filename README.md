@@ -170,7 +170,7 @@ These two links sit outside the five course modules. Copilot Studio workflows ar
 - The tool name must be unique and recognizable; the description explains the action and the expected input and output
 - A clear description is what lets the orchestrator match a user message to the right action
 ### Product Support example
-- Use the SharePoint List folder connector to list the support files in the Products library
+- Use the SharePoint Get items connector tool to query product support cases in the Support Cases list
 - Users connect with their own credentials, so the agent never exceeds their data permissions
 ```
 
