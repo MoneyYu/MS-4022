@@ -71,15 +71,15 @@ Set-Location .\seed-data\scenarios\ms4022-productsupport
 
 ## 加入 Connector Tool（M05）
 
-1. 在 solution 中建立 connector tool，選取 SharePoint connector 的列出資料夾或檔案動作，目標指向 `Products` document library。
-2. 名稱使用 `List Product Support Files`，description 要明確寫出：列出 Products 文件庫內可供支援人員查閱的檔案，以及預期的輸入與輸出。
+1. 在 solution 中建立 connector tool，選取 SharePoint connector 的 **Get items** 動作，目標指向 `Support Cases` 清單。
+2. 名稱使用 `Get product support cases`，description 要明確寫出：可依產品或狀態查詢支援案件，以及預期的輸入與輸出。Inputs 的 `Site Address` 指向 demo 站台，`List Name` 選 `Support Cases`。
 3. 建立連線時，使用 demo 使用者自己的 SharePoint credentials；不要用 app-only seeding secret 當作 connector user connection。
-4. 將 tool 加入 agent，補充 instruction：使用者詢問「有哪些產品支援文件」或要求列出可用檔案時，使用此 tool。
-5. 測試「List the available Product Support files」；結果應反映文件庫的實際檔案，並確認無權限使用者無法取得內容。
+4. 將 tool 加入 agent，補充 instruction：使用者詢問案件狀態、未結案件或特定產品的支援紀錄時，使用此 tool，並說明資料來自 SharePoint 清單。
+5. 用兩個對照提問測試：「保固怎麼計算？」應由文件 knowledge 回答；「Mark8 目前有哪些未結案件？」應由此 connector tool 回答。再以無權限使用者確認取不到清單內容。
 
 Connector tool 的核心是藉 API 取得或更新外部資料；名稱與 description 會協助 orchestration 決定何時與如何使用 tool。[Lab 3.1](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/03-Connector-actions/01-create-connector-action.html)、[Use connectors in Copilot Studio agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-connectors)。
 
-若要示範查詢營運資料而非列出檔案，改用 SharePoint connector 的 **Get items** 動作指向 `Support Cases` 清單，並在 description 寫明可依產品或狀態查詢案件。這樣 M02 的文件 grounding 與 M05 的 connector tool 各自回答不同類型的問題，學員比較容易分辨何時該用 knowledge、何時該用 tool。
+官方 lab 頁面用的是 `List folder` 搭配 `File Identifier = Products`，只回答「有哪些檔案」。本課改用 `Get items` 讓 M02 的文件 grounding 與 M05 的 connector tool 各自回答不同類型的問題；若環境沒有 seed 過的 `Support Cases` 清單，就退回官方 `List folder` 步驟。
 
 ## 發佈與授課前驗證
 
@@ -93,8 +93,10 @@ Connector tool 的核心是藉 API 取得或更新外部資料；名稱與 descr
 | 知識回答 | Products 文件支援的回答包含 citation。 |
 | 不存在的資訊 | agent 說明找不到資訊並導向支援管道，不杜撰答案。 |
 | Prompt tool | 回覆遵守摘要、建議下一步、未知資訊的格式。 |
-| Connector tool | 可列出 Products 文件庫檔案，且 description 所述 input/output 清楚。 |
+| Connector tool | 可依產品或狀態回傳 `Support Cases` 清單項目，且 description 所述 input/output 清楚。 |
 | 發佈 | agent 在目標 demo 帳號的 Microsoft 365 Copilot 可見且可互動。 |
 
 授課後，刪除或封存日期化 demo group、撤銷不再需要的 app secret，並保留不含機密的授課觀察記錄。
+
+
 
