@@ -80,19 +80,38 @@ function Get-OrCreate-Group {
     }
     $members = if ($Site.members) { @(Resolve-RoleUris -Roles @($Site.members)) } else { @() }
 
-    $filter = [System.Uri]::EscapeDataString("mailNickname eq '$($Site.alias)'")
-    $existing = Invoke-SeedGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/groups?`$filter=$filter"
-    if ($existing.value.Count -gt 0) {
-        Assert-ExpectedDemoGroup -Group $existing.value[0] -Alias $Site.alias
-        Ensure-GroupRelationship -GroupId $existing.value[0].id -Relationship owners -DesiredUris $owners
-        Ensure-GroupRelationship -GroupId $existing.value[0].id -Relationship members -DesiredUris $members
+    $getGroup = {
+        param($alias)
+        $filter = [System.Uri]::EscapeDataString("mailNickname eq '$alias'")
+        Invoke-SeedGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/groups?`$filter=$filter"
+    }
+    $existing = & $getGroup $Site.alias
+    $existingGroup = @($existing.value) | Select-Object -First 1
+    if ($existingGroup) {
+        Assert-ExpectedDemoGroup -Group $existingGroup -Alias $Site.alias
+        Ensure-GroupRelationship -GroupId $existingGroup.id -Relationship owners -DesiredUris $owners
+        Ensure-GroupRelationship -GroupId $existingGroup.id -Relationship members -DesiredUris $members
         Write-Host "Reusing group: $($Site.alias)" -ForegroundColor Yellow
-        return $existing.value[0]
+        return $existingGroup
     }
 
     $body = New-GroupCreatePayload -Site $Site -OwnerUris $owners -MemberUris $members
     Write-Host "Creating group: $($Site.alias)" -ForegroundColor Cyan
-    return Invoke-SeedGraphRequest -Method POST -Uri "https://graph.microsoft.com/v1.0/groups" -Body $body
+    try {
+        return Invoke-SeedGraphRequest -Method POST -Uri "https://graph.microsoft.com/v1.0/groups" -Body $body
+    } catch {
+        $creationFailure = $_
+        $existingGroup = Get-ExistingGroupWithRetry -Alias $Site.alias -GetGroup $getGroup
+        if (-not $existingGroup) {
+            throw $creationFailure
+        }
+
+        Assert-ExpectedDemoGroup -Group $existingGroup -Alias $Site.alias
+        Ensure-GroupRelationship -GroupId $existingGroup.id -Relationship owners -DesiredUris $owners
+        Ensure-GroupRelationship -GroupId $existingGroup.id -Relationship members -DesiredUris $members
+        Write-Host "Reusing group after replication delay: $($Site.alias)" -ForegroundColor Yellow
+        return $existingGroup
+    }
 }
 
 function Wait-ForSite {

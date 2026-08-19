@@ -54,7 +54,7 @@
 | 02:05–02:20 | 15 | Break | 講師確認每組 agent / knowledge source 狀態。 |
 | 02:20–02:50 | 30 | M03 | 先討論 knowledge vs tool，再把 prompt、connector、MCP 放入同一個選擇框架。 |
 | 02:50–03:40 | 50 | M04 + Lab 2 | 建立有輸入、輸出與 fallback 的 prompt tool，做 sample-data 測試。 |
-| 03:40–04:25 | 45 | M05 + Lab 3 | 以 Products library 的 SharePoint connector tool 示範清楚 description 與 per-user connection。 |
+| 03:40–04:25 | 45 | M05 + Lab 3 | 以 Support Cases 清單的 SharePoint Get items connector tool 示範清楚 description 與 per-user connection。 |
 | 04:25–04:35 | 10 | Conclusion | 讓學員說出一項回到工作後會先實作或驗證的能力。 |
 
 ### 壓縮與延展規則

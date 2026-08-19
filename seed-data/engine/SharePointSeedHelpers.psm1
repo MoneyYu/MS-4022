@@ -38,6 +38,30 @@ function Assert-ExpectedDemoGroup {
     }
 }
 
+function Get-ExistingGroupWithRetry {
+    param(
+        [Parameter(Mandatory)][string]$Alias,
+        [Parameter(Mandatory)][scriptblock]$GetGroup,
+        [scriptblock]$Sleep = { param([int]$Seconds) Start-Sleep -Seconds $Seconds },
+        [ValidateRange(1, 60)][int]$MaxAttempts = 6,
+        [ValidateRange(0, 60)][int]$DelaySeconds = 5
+    )
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        $response = & $GetGroup $Alias
+        $group = @($response.value) | Select-Object -First 1
+        if ($group) {
+            return $group
+        }
+
+        if ($attempt -lt $MaxAttempts) {
+            & $Sleep $DelaySeconds
+        }
+    }
+
+    return $null
+}
+
 function Get-MissingDirectoryObjectUris {
     param(
         [string[]]$DesiredUris,
@@ -147,4 +171,4 @@ function Get-ListItemsUri {
     return "https://graph.microsoft.com/v1.0/sites/$SiteId/lists/${ListId}/items?`$expand=fields"
 }
 
-Export-ModuleMember -Function New-DocumentLibraryPayload, Get-DocumentUploadUri, Assert-ExpectedDemoGroup, Get-MissingDirectoryObjectUris, Get-PagedGraphValues, New-GroupCreatePayload, Get-GroupRelationshipUri, New-ListPayload, Get-MissingListItems, Get-ListItemsUri
+Export-ModuleMember -Function New-DocumentLibraryPayload, Get-DocumentUploadUri, Assert-ExpectedDemoGroup, Get-ExistingGroupWithRetry, Get-MissingDirectoryObjectUris, Get-PagedGraphValues, New-GroupCreatePayload, Get-GroupRelationshipUri, New-ListPayload, Get-MissingListItems, Get-ListItemsUri

@@ -52,6 +52,31 @@ Describe "SharePoint seed helpers" {
         $wasRejected | Should Be $true
     }
 
+    It "retries an alias lookup after temporary Graph replication delay" {
+        $responses = @(
+            [pscustomobject]@{ value = @() },
+            [pscustomobject]@{ value = @() },
+            [pscustomobject]@{ value = @([pscustomobject]@{ id = "group-id" }) }
+        )
+        $attempts = [System.Collections.ArrayList]::new()
+        $delays = [System.Collections.ArrayList]::new()
+        $getGroup = {
+            param($alias)
+            [void]$attempts.Add($alias)
+            return $responses[$attempts.Count - 1]
+        }.GetNewClosure()
+        $sleep = {
+            param($seconds)
+            [void]$delays.Add($seconds)
+        }.GetNewClosure()
+
+        $group = Get-ExistingGroupWithRetry -Alias "ms4022-productsupport-20260819" -GetGroup $getGroup -Sleep $sleep -MaxAttempts 3 -DelaySeconds 1
+
+        $group.id | Should Be "group-id"
+        $attempts.Count | Should Be 3
+        $delays.Count | Should Be 2
+    }
+
     It "returns only desired directory object URIs missing from a group relationship" {
         $desiredUris = @(
             "https://graph.microsoft.com/v1.0/users/admin-id",
