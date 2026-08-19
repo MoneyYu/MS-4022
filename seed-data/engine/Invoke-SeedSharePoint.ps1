@@ -217,7 +217,3 @@ foreach ($siteConfig in $seedData.sites) {
         Add-ListItems -SiteId $site.id -ListId $listId -ListConfig $listConfig
     }
 }
-
-
-
-

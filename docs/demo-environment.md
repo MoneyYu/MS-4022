@@ -97,6 +97,3 @@ Connector tool 的核心是藉 API 取得或更新外部資料；名稱與 descr
 | 發佈 | agent 在目標 demo 帳號的 Microsoft 365 Copilot 可見且可互動。 |
 
 授課後，刪除或封存日期化 demo group、撤銷不再需要的 app secret，並保留不含機密的授課觀察記錄。
-
-
-
