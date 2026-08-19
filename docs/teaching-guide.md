@@ -26,7 +26,7 @@
 | M02 - 使用 Copilot Studio 為 Microsoft 365 Copilot 建立您的第一個宣告式代理程式 | 設計 agent、撰寫 instructions、加上 SharePoint knowledge、發佈與驗證。 | Product Support agent：能力、語氣、知識來源、fallback 要一起定義。 | Lab 1.1、1.2、1.3。 |
 | M03 - Copilot Studio 中宣告式代理程式工具簡介 | 分辨 prompt、connector、REST API、MCP 等 tool 類型與設定考量。 | Tool 是可重用 capability；description、inputs、outputs、environment 與 solution 影響 orchestration。 | 以「什麼時候用 knowledge，什麼時候用 tool」討論。 |
 | M04 - 在 Copilot Studio 中使用提示詞工具擴充宣告式代理程式 | 建立、測試並加入 prompt tool。 | 好的 prompt 要具體、用範例、保持簡單、定義無法完成時的回應。 | Lab 2.1、sample prompt activity。 |
-| M05 - 在 Copilot Studio 中使用連接器工具擴充宣告式代理程式 | 設定 connector tool、清楚描述 action，並在 agent 中測試。 | Connector tool 是透過 API 存取外部資料；使用者連線與 tool description 都是功能的一部分。 | Lab 3.1，Products library 的 SharePoint connector tool。 |
+| M05 - 在 Copilot Studio 中使用連接器工具擴充宣告式代理程式 | 設定 connector tool、清楚描述 action，並在 agent 中測試。 | Connector tool 是透過 API 存取外部資料；使用者連線與 tool description 都是功能的一部分。 | Lab 3.1，Products library 的 SharePoint connector tool；可選延伸為 Support Cases 清單。 |
 
 ## 建議議程
 
@@ -170,6 +170,16 @@
 1. [Lab 3.1 - Create a connector tool](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/03-Connector-actions/01-create-connector-action.html)
 2. 以 `List Product Support Files` 為 tool name，描述 `Products` 文件庫的列出檔案能力。
 3. 讓學員問「有哪些可用的產品支援文件？」並比對 connector output 與 SharePoint 實際檔案。
+
+**選用延伸：用 Support Cases 清單查詢營運資料**
+
+官方 Lab 3.1 的 `List folder` 只回答「有哪些檔案」。時間允許時，再加一個指向 demo 站台 `Support Cases` 清單的 connector tool，使用 SharePoint 的 `Get items` 動作：
+
+- tool name 用 `Get product support cases`，description 明寫可依產品或狀態查詢案件，以及預期的輸入與輸出。
+- 讓學員先問「保固怎麼計算？」走 M02 的文件 knowledge，再問「Mark8 目前有哪些未結案件？」走這個 connector tool。
+- 收斂重點：同一個 agent 裡，文件回答政策與規格，清單回答即時營運資料。這是判斷「該用 knowledge 還是 tool」最具體的練習。
+
+此延伸不取代官方 lab 步驟；清單資料由 [demo-environment.md](demo-environment.md) 的 seeder 建立。
 
 **Knowledge Check 提示**
 
