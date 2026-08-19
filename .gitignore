@@ -11,3 +11,7 @@ __pycache__/
 
 # Course-local scratch files
 course-scratch/
+
+# Local M365 demo-seeding secrets and downloaded lab data
+seed-data/scenarios/*/config.json
+seed-data/scenarios/*/source/

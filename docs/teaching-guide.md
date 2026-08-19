@@ -1,408 +1,256 @@
-# MS-4014 備課指南
+# MS-4022 備課指南（trainer-only）
 
-> [!WARNING]
-> **這份指南只適用於 July 2026 major refresh 版的 MS-4014。**
-> 請不要沿用舊版的 Graph connectors、declarative agents、舊 YouTube playlist、舊 labs，也不要把課程講成舊版的 Copilot extensibility / development-path 課。
-> 目前正式結構是 **3 個模組**、**3 小時 instructor-led core delivery（含 15 分鐘 break）**，而且互動方式以 Discussion、Activity、Try it 與選擇性 demo 為主。版本差異請對照 [version-change-notes.md](version-change-notes.md)，詳細 legacy 說明與 migration notes 以該文件為準。
+本指南適用於 **MS-4022: Extend Microsoft 365 Copilot in Copilot Studio**。學員公開教材、lab 連結與課程 metadata 位於 [README](../README.md)；SharePoint Product Support demo 的建置流程位於 [demo-environment.md](demo-environment.md)。
 
-> [!IMPORTANT]
-> 本文件是 trainer-only 備課內容。學員公開材料請維持在 [../README.md](../README.md)；不要把本文的 facilitation cue、Knowledge Check 解釋與版本風險提醒直接搬到學員版。
+## 交付基線與證據
 
-## 課程概覽
-
-- **課程定位**：MS-4014 是一門 *planning-first* 的入門課。它先建立 AI agents 的共同語言，再帶學員比較 Microsoft 平台與服務，最後收斂到 solution planning；它不是 hands-on build lab，也不是單一產品操作課。
-- **對象**：Trainer Prep Guide 將本課定位給想理解 AI agents、agent development options 與 AI transformation 的 developers 與 makers。
-- **學員先備**：建議學員先具備 Microsoft 365 Copilot 基本熟悉度、agents / models / orchestration 等 generative AI 基本概念，以及 Microsoft 365、Power Platform、Azure 等核心 Microsoft Cloud 平台的概念。
-- **講師先備**：講師最好已經實際接觸過 AI agents 或 Microsoft 365 Copilot extensibility，並能清楚講解 model、orchestrator、custom agent、plugin、connector、Copilot connectors 等關鍵詞。
-
-| 面向 | 公開 Learn 課程頁 | 講師實際交付依據 |
+| 項目 | 決定 | 證據 |
 | --- | --- | --- |
-| 對外呈現 | [Course MS-4014-A](https://learn.microsoft.com/en-us/training/courses/ms-4014) 目前仍顯示 **Course Duration = 1 day**，並以 self-directed learning / Achievement Code 的 catalog 方式呈現。 | Trainer Prep Guide 明確寫成 **3-hour instructor-led course including a 15-minute break**。 |
-| 你該怎麼用 | 用來說明課程定位、公開描述與 Achievement Code 脈絡。 | 用來決定實際 run-of-show、互動密度、demo 深淺與時間切法。 |
-| 備課原則 | 不要因為 Learn 頁面寫 1 day，就把內容展開成全日版或補回舊 labs。 | 一律以當次 issued schedule 規劃交付：先看你拿到的是 3 小時、半日併班、還是內訓壓縮版，再決定互動分享長度。 |
+| 課程目標 | 讓 makers/developers 以 Copilot Studio 建立宣告式代理程式、加入 knowledge 與 prompt/connector tools，並發佈至 Microsoft 365 Copilot。 | [Trainer Prep Guide](../PPT/MS-4022-ENU-TrainerPrepGuide.pdf) p.1、[課程頁](https://learn.microsoft.com/en-us/training/courses/ms-4022)。 |
+| 課程範圍 | 依官方五模組授課：宣告式代理程式、第一個 agent、agent tools、prompt tools、connector tools。 | [繁中內容簡報](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx) slides 2、4、20、37、49、61。 |
+| 時間 | 官方設計為 one-day，核心交付估計為 3–6 小時，休息時間另計；本指南提供 4 小時 35 分鐘含 15 分鐘休息的標準版。 | [Trainer Prep Guide](../PPT/MS-4022-ENU-TrainerPrepGuide.pdf) p.4–5。 |
+| Lab 策略 | 講師必須先自行完成 labs；BYOE 使用官方 GitHub instructions，hosted delivery 則以 lab provider UI 為準。 | [Trainer Prep Guide](../PPT/MS-4022-ENU-TrainerPrepGuide.pdf) p.3、p.5。 |
+| 版本狀態 | May 2025 初版後，August 2025 將 actions 用語改為 agent tools，December 2025 更新螢幕截圖並重新測試 labs；這些都是 minor refresh。 | [Change Log](../PPT/MS-4022-ENU-ChangeLog.pdf) p.2。 |
 
-補一句話給自己：**這門課的核心不是把某個 agent 做出來，而是幫學員建立「怎麼選平台、怎麼規劃 solution、怎麼避免一開始就走錯」的判斷框架。**
+## 講師定位
 
-## 課程地圖：3 個模組
+- **適合對象**：熟悉 Microsoft 365 Copilot、具基本 AI 概念的 makers 與 developers。
+- **講師先備**：要能實作 Copilot Studio agent，並說明 Power Platform connectors、Copilot connectors（舊稱 Graph connectors）、declarative agents，以及 model、orchestrator、plugin 等概念。
+- **不應承諾**：本課不是認證考試或 Applied Skills 的直接準備課。交付時只說明 Achievement Code，並跳過通用 certification pitch；每次開課前重新確認當梯 credential 資訊。
 
-| 模組 | 主軸 | 建議教學格式 | 互動與檢核 |
+## 五模組地圖
+
+| 模組 | 學員完成後應能 | 講師主線 | 對應實作 |
 | --- | --- | --- | --- |
-| **M01 - Introduction to developing AI agents** | 平台無關的 agent 基本觀念、business value、use cases、architecture vocabulary | 以講解為主，先讓學員把「agent ≠ 單純 chatbot」這件事講清楚 | **1 個 Discussion（Slide 8）+ 1 個 Activity（Slide 13）+ Knowledge Check（Slide 18）** |
-| **M02 - Choose tools and services for your agent on Microsoft's agent platform** | development path、channels、grounding、integrations、governance/identity 的選擇題 | 以 scenario-based comparison 為主，不是 build tutorial | **5 個 Discussions（Slides 29/36/41/47/53）+ Knowledge Check（Slides 54/55）** |
-| **M03 - Plan an AI agent solution** | outcomes、workflow、interaction patterns、identity/governance/security/Responsible AI 的 planning discipline | 以 planning-first 設計思考為主，讓學員把 agent blueprint 講完整 | **2 張 Discussion slides（Slides 70/90）+ 1 個 Try it 互動（Slide 78）+ Knowledge Check（Slides 91/92）** |
+| M01 - Microsoft 365 Copilot 宣告式代理程式簡介 | 評估何時適合使用宣告式代理程式，說明 instruction、knowledge、tool 的角色。 | 「情境明確、資料在 Microsoft 365、可沿用 M365 Copilot model/orchestration」才適合。 | 展示 immersive chat 與 `@mention` in-context chat。 |
+| M02 - 使用 Copilot Studio 為 Microsoft 365 Copilot 建立您的第一個宣告式代理程式 | 設計 agent、撰寫 instructions、加上 SharePoint knowledge、發佈與驗證。 | Product Support agent：能力、語氣、知識來源、fallback 要一起定義。 | Lab 1.1、1.2、1.3。 |
+| M03 - Copilot Studio 中宣告式代理程式工具簡介 | 分辨 prompt、connector、REST API、MCP 等 tool 類型與設定考量。 | Tool 是可重用 capability；description、inputs、outputs、environment 與 solution 影響 orchestration。 | 以「什麼時候用 knowledge，什麼時候用 tool」討論。 |
+| M04 - 在 Copilot Studio 中使用提示詞工具擴充宣告式代理程式 | 建立、測試並加入 prompt tool。 | 好的 prompt 要具體、用範例、保持簡單、定義無法完成時的回應。 | Lab 2.1、sample prompt activity。 |
+| M05 - 在 Copilot Studio 中使用連接器工具擴充宣告式代理程式 | 設定 connector tool、清楚描述 action，並在 agent 中測試。 | Connector tool 是透過 API 存取外部資料；使用者連線與 tool description 都是功能的一部分。 | Lab 3.1，改用 Support Cases 清單的 Get items connector tool。 |
 
-請特別記住：**deck 只有 8 張標題明確寫成 `Discussion` 的投影片。** Trainer Prep Guide 對 M03 寫的是 3 個 discussion moments，但在 deck 內的實際呈現是 **2 張 `Discussion` + 1 個 `Try it`**；不要把互動總數誤讀成「多出一張同名 `Discussion` 投影片」。
+## 建議議程
 
-## 建議議程與時間分配
+### 官方時間窗
 
-Trainer Prep Guide 同時給了「3-hour course（含 break）」與各段 component time budget。實際備課時，不要把所有高標時間直接相加；**標準 3 小時場次要用低標起跑，並把 Knowledge Check 與 share-out 壓進講解流程。**
-另外要先接受一個事實：**就算全部採低標，Intro + M1 + Break + M2 + M3 + Conclusion 合計仍約 224 分鐘，已高於 180 分鐘的表定課長**；因此 issued schedule 若仍是 3 小時，就一定要再裁切互動分享或把部分檢核完全融入講解。
+| 區段 | 官方估計 | 主要互動 |
+| --- | ---: | --- |
+| Welcome / Introduction | 20–45 分鐘 | 自我介紹、課程與環境說明。 |
+| M01 | Presentation 10–15 分鐘；interactivity 5–25 分鐘 | 宣告式 agent demo、KC。 |
+| M02 | Presentation 10–15 分鐘；interactivity 55–90 分鐘 | Lab 1：建立 agent、knowledge、suggested prompts。 |
+| M03 | Presentation 10–15 分鐘；interactivity 10–30 分鐘 | Tools discussion、KC。 |
+| M04 | Presentation 10–15 分鐘；interactivity 30–60 分鐘 | Lab 2：prompt tool、sample prompt activity、KC。 |
+| M05 | Presentation 10–15 分鐘；interactivity 25–45 分鐘 | Lab 3：connector tool、KC。 |
+| Conclusion | 10–30 分鐘 | Learning path review、心得討論。 |
 
-| 區段 | Trainer Prep Guide time budget | 講師場控建議 |
-| --- | --- | --- |
-| Intro | 10–15 分鐘 | 只做版本警告、課程定位、互動規則與 expectation setting。不要在這裡展開產品史。 |
-| M01 presentation | 25–30 分鐘 | 用 1 個學員熟悉的流程案例，把 retrieval → task → autonomous continuum 一次講清楚。 |
-| M01 discussion | 5–10 分鐘 | Slide 8 最多抓 2–3 組分享即可，其餘用 chat 蒐集。 |
-| M01 activity | 5–10 分鐘 | 時間緊時壓到 5 分鐘；必要時改成講師示範 1 個案例 + 學員口頭回應。 |
-| M01 knowledge check | 3–5 分鐘 | 直接口頭快問快答，不要開成獨立測驗段。 |
-| Break | 15 分鐘 | 建議固定保留。第二小時開始會進入 platform choice 與 governance，學員精神很重要。 |
-| M02 presentation | 55–60 分鐘 | 這是最容易超時的模組，務必用同一個 scenario 貫穿，不要每張 slide 換一個例子。 |
-| M02 five discussions | 20–35 分鐘 | 每題 3–5 分鐘即可；若 schedule 緊，保留 verbal share-out 給 Slides 29 與 41，其他題目用 chat waterfall。 |
-| M02 knowledge check | 3–5 分鐘 | 只挑最容易混淆的平台 / IQ / governance 題目做口頭檢核。 |
-| M03 presentation | 55–60 分鐘 | 這段是整門課的收斂，寧可少 demo，也不要壓縮 outcomes / workflow / identity 的邏輯鏈。 |
-| M03 two Discussions + Try it | 15–35 分鐘 | Slide 70 適合 pair-share；Slide 78 Try it 要求畫 workflow；Slide 90 依 speaker notes 只挑 1–2 題即可。 |
-| M03 knowledge check | 3–5 分鐘 | 因 Slides 91/92 的 deck notes 沒有 authoritative answer，若你還沒先驗證，就不要現場公布「標準答案」。 |
-| Conclusion | 10 分鐘 | 回收三件事：怎麼選平台、怎麼選 grounding / integrations、怎麼先規劃再 build。 |
+### 標準 4 小時 35 分鐘版本
 
-### 可直接執行的 180 分鐘標準 run-of-show
+此版本在官方 3–6 小時範圍內，保留三段 hands-on lab 與一段短休息；適合已有預先建立 Power Platform environment 與 Products 資料的班級。
 
-> 下面這版是把 Trainer Prep Guide 的 component time budget 壓成「可在 3 小時內完成」的標準交付版；Knowledge Check 一律內嵌、互動分享採短回應，但 **M03 的 outcomes / workflow / identity / guardrails 收斂必須保留**。
-
-| 時間 | 分鐘 | 區段 | 交付方式 |
+| 時間 | 分鐘 | 區段 | 場控重點 |
 | --- | ---: | --- | --- |
-| 00:00–00:10 | 10 | Intro | 版本警告、課程定位、互動規則、今日學習地圖。 |
-| 00:10–00:43 | 33 | M01 | 20 分鐘 presentation + 5 分鐘 Slide 8 Discussion + 5 分鐘 Slide 13 Activity + 3 分鐘 KC（Slide 18）。 |
-| 00:43–01:46 | 63 | M02 | 40 分鐘 presentation + 20 分鐘給 5 個 Discussion prompts（每題上限 4 分鐘）+ 3 分鐘 KC（Slides 54/55）。 |
-| 01:46–02:01 | 15 | Break | 固定保留。 |
-| 02:01–02:54 | 53 | M03 | 35 分鐘 presentation + 15 分鐘給 Slide 70 Discussion、Slide 78 Try it、Slide 90 Discussion + 3 分鐘 KC（Slides 91/92）。 |
-| 02:54–03:00 | 6 | Conclusion | 回收平台選擇、grounding / integration、planning-first 三條主線。 |
-| **Total** | **180** |  | **含 15 分鐘 break。** |
+| 00:00–00:20 | 20 | Intro | 說明課程成果、lab 環境、互動規則與 Achievement Code。 |
+| 00:20–00:50 | 30 | M01 | 以客服或 IT service desk 情境連結 instruction、knowledge、tool；demo 只顯示兩種 chat 體驗。 |
+| 00:50–02:05 | 75 | M02 + Lab 1 | 先建立 Product Support，再完成 knowledge 與 suggested prompts；以 citation 驗收。 |
+| 02:05–02:20 | 15 | Break | 講師確認每組 agent / knowledge source 狀態。 |
+| 02:20–02:50 | 30 | M03 | 先討論 knowledge vs tool，再把 prompt、connector、MCP 放入同一個選擇框架。 |
+| 02:50–03:40 | 50 | M04 + Lab 2 | 建立有輸入、輸出與 fallback 的 prompt tool，做 sample-data 測試。 |
+| 03:40–04:25 | 45 | M05 + Lab 3 | 以 Support Cases 清單的 SharePoint Get items connector tool 示範清楚 description 與 per-user connection。 |
+| 04:25–04:35 | 10 | Conclusion | 讓學員說出一項回到工作後會先實作或驗證的能力。 |
 
-#### 排程救援 / cut 順序（照這個順序做）
+### 壓縮與延展規則
 
-1. **先縮 share-out，不先砍互動本體**：M01 Slide 8、M02 五題 Discussion、M03 Slide 70 / Slide 90 一旦超時，先改成 chat waterfall、pair response、舉手點 1 組口頭回報，而不是直接取消提問。
-2. **再嚴格 time-box M02 五題 prompts**：每題最多 4 分鐘；若時間再滑動，Slides 36 / 47 / 53 改成 60–90 秒 quick poll + trainer synthesis，但五題主題仍要點到。
-3. **再把三個模組的 KC 完全 inline 化**：不要另切小考段落，改用口頭快問快答、舉手或 chat A/B/C 收斂；Slides 91/92 仍維持 source-only facilitation，不公布未先驗證的 authoritative answer。
-4. **永遠不要把 M03 planning closure 整段省略**：真的落後時，優先砍 demo、縮結語句數、壓短前段分享；但至少要講完 outcomes / success metrics、workflow / interaction pattern、identity / guardrails / Responsible AI，讓學員帶著完整 blueprint 離場。
+- **壓縮至 3 小時**：預先 seed Products、預先建立 environment，Lab 1 只完成 knowledge 與一個 suggested prompt；M04/M05 改講師示範，KC 採 inline 快問快答。
+- **延展至 6 小時**：保留每個 lab 的 troubleshooting、M03 discussion、M04 sample prompt activity，以及使用兩種使用者權限測試 citation/connector 結果。
+- **時間先砍順序**：先縮 share-out，再縮 demo 範圍，最後才減少 lab 選用步驟；不要省略 M02 的 citation 或 M05 的 connection/description 驗收。
 
-### 時間風險控制
+## 模組 facilitation 與 Knowledge Check
 
-1. **先鎖低標，不鎖高標**：標準 3 小時班先按每段低標排；有額外時間再放大分享，不要反過來。
-2. **Knowledge Check 融入講解**：Trainer Prep Guide 明說可以把 Knowledge Checks 混在授課過程中，而不是每模組都切獨立小考。
-3. **M02 是最大超時點**：platform、channels、IQ、integrations、governance 全在同一模組，最容易被 demo 與比較題拉長。
-4. **Slide 90 只選 1–2 題**：speaker notes 已經授權依 audience relevance 選題；不要四題全開。
-5. **demo 只做「看懂差異」**：這門課不需要 live build。若 demo 讓你離開主線，就砍 demo，不要砍 planning 主軸。
-6. **不要把低標當成可直接照抄的 run-of-show**：低標總和仍超出 3 小時，必須主動裁切；否則最常被犧牲的會是 M03，而那正是本課最重要的 planning 收斂段。
+### M01 - Microsoft 365 Copilot 宣告式代理程式簡介
 
-## 貫穿全課的核心觀念
+**說明重點**
 
-1. **Agent continuum 與 architecture 是全課底圖**
-   M01 先把 retrieval / task / autonomous 當成連續體，而不是硬分類；再用 Knowledge、Tools、Autonomy、Model、Orchestrator、Connected agents 畫出 agent architecture。後面 M02 的平台選擇、M03 的 solution planning 都是沿著這張底圖展開。
+- 宣告式代理程式是對話式 AI，可提供資訊並執行工作；典型情境是客戶支援、IT service desk、HR support。
+- 三個組成元件要清楚區分：**instructions** 定義行為與界限，**knowledge** 提供 grounding，**tools** 讓 agent 與外部系統互動。
+- 用同一個案例判斷適合性：若需要自訂 model/orchestrator，不要強行套成宣告式 agent；若可用 Microsoft 365 資料與 connector/tool 補足，就適合先從 declarative path 開始。
 
-2. **low-code vs pro-code 是「控制權與責任」的選擇，不是高低之分**
-   Agent Builder 偏 no-code、Copilot Studio 偏 low-code、Microsoft Foundry 提供更高的 model / orchestration / channel 控制。要讓學員理解：控制權越高，治理責任越明確；不是 Foundry 比 Copilot Studio「更高級」，而是適用條件不同。
+**互動與 demo**
 
-3. **Microsoft IQ / grounding 要從 data domain 反推**
-   先問資料在哪裡、長什麼樣、授權模型是什麼，再問要用 Work IQ、Foundry IQ、Fabric IQ，或多個服務組合。不要把 grounding 講成「接一個知識庫就好」。
+- 問學員：「你們的支援問題中，哪一類最適合用受控文件回答？」再把答案映射到 knowledge；追問哪些問題需要讀取即時系統，讓學員說出 tool。
+- 示範 immersive 1:1 chat 與 Copilot Chat 中的 `@mention`，不要 live build。
 
-4. **channels、integrations、A2A、MCP 其實是在談 agent 的邊界與互通**
-   channel 不只是 UI；它同時決定 publishing path 與 governance defaults。MCP 是 agent 連到 tools / data 的通用方式；A2A 是跨 frameworks / platforms / organizations 的 agent-to-agent 協作；Microsoft 生態內則優先考慮 native integration。
+**Knowledge Check 提示**
 
-5. **identity、governance、least privilege、Responsible AI 要在 planning 階段進場**
-   這不是 build 完再補的工作。interaction pattern、permissions、agent user account、guardrails、sponsor / owner、review cadence，都會反過來改寫 solution design。
+| 題意 | 正確概念 | 為何 |
+| --- | --- | --- |
+| 將即時內部訂單系統整合到 agent | Custom tool | 即時 API 系統不是 instruction 或 knowledge source 的替代品。 |
+| Custom instructions 與 custom grounding 的差異 | Instructions 定義行為；grounding 提供額外資料與脈絡 | 兩者解決不同問題。 |
+| 可作為 grounding 的 Microsoft 365 資料 | SharePoint Online、OneDrive、經 Copilot connectors 擷取到 Microsoft 365 的資料 | 對應投影片列出的可用來源。 |
 
-6. **術語要全部更新到 current terminology**
-   - Graph connectors → **Copilot connectors**
-   - Teams Toolkit → **Microsoft 365 Agents Toolkit**
-   - Teams AI Library → **Teams SDK**
-   - Azure AI Foundry → **Microsoft Foundry**
-   - Azure AI Agent Service → **Foundry Agent Service**
-   - Semantic Kernel + AutoGen → **Microsoft Agent Framework**
-   - Agent Builder 是 **Copilot Studio 的 lite version**，不要把兩者講成完全相同，也不要沿用舊版把 declarative agents 當成這門課的主線。
+來源：[繁中內容簡報](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx) slides 4–17、[M01 Learn module](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-intro/)。
 
-## 逐模組備課指南
+### M02 - 使用 Copilot Studio 為 Microsoft 365 Copilot 建立您的第一個宣告式代理程式
 
-### M01 - Introduction to developing AI agents
-
-#### 學習目標
+**說明重點**
 
-- Define AI agents
-- Explain the business value of AI agents
-- Identify common use cases for AI agents
-- Define the core components of AI agents
-
-#### 講解重點
-
-- 這一模組 **platform-agnostic**；先建立共同語言，再進入 M02 的 Microsoft 平台地圖。
-- Slide 4 要講清楚 agent 的工作定義：agents use AI to **automate and execute** business processes，這是它和單純 generative chat assistant 的分水嶺。
-- Slide 5 的 continuum 很重要：retrieval、task、autonomous 是範圍，不是三個互斥盒子。
-- Slides 7–12 要把 pain point → business value → use case → process-first 切入一路串起來，避免學員只記住炫技案例。
-- Slides 15–17 要用 architecture vocabulary 為 M02 鋪路：Knowledge、Tools、Autonomy、Model、Orchestrator、Connected agents。
+- 開始前先讓學員寫出 capability、tone/role、information sources、fallback；這四項是 instruction 的驗收條件。
+- SharePoint knowledge source 採使用者權限；要求每組測試一個可回答問題與一個無資料問題，兩者都要看 citation/fallback。
+- Suggested prompts 是可用情境的入口，不只是漂亮按鈕；每組最多挑 3 個真實問題來證明能力範圍。
 
-#### 互動設計
+**Lab 路徑**
 
-- **Slide 8 — `Discussion`**
-  Prompt: **"which business value or opportunity area could have the greatest impact for your team or organization?"**
-  Facilitation:
-  - 給 3–5 分鐘先自己想或 pair discussion，再請少數幾位分享。
-  - speaker notes 建議把共通答案記在白板或 chat，後面講 use cases 與 platform choice 時再回勾。
-  - 常見答案通常會落在「知識不好找、流程卡住、backlog 成長快過 headcount」。
+1. [Lab 1.1 - Create a declarative agent](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/01-Build-your-first-declarative-agent/01-create-declarative-agent.html)
+2. [Lab 1.2 - Add custom knowledge](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/01-Build-your-first-declarative-agent/02-add-custom-knowledge.html)
+3. [Lab 1.3 - Add suggested prompts](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/01-Build-your-first-declarative-agent/03-add-starter-prompts.html)
 
-- **Slide 13 — `Activity`**
-  Prompt: **"explore real-world use cases"**
-  Facilitation:
-  - speaker notes 建議讓學員看 Microsoft WorkLab 的案例頁，挑與自己團隊相關的類別再回來分享。
-  - 這個活動的真正目的不是「找最炫的案例」，而是把 Slide 8 找到的 pain point，對應到可落地的 agent use case。
-  - 因該外部頁面網址不在本 repo 的 approved-current link ledger 中，若你要現場開啟，請在開課前自行重新驗證；本文不列正式 URL。
+**Knowledge Check 提示**
 
-#### Knowledge Check
+| 題意 | 正確概念 |
+| --- | --- |
+| 發佈給全租用戶使用 | 選擇向組織中的所有人顯示，並遵守租用戶的 admin governance。 |
+| 撰寫 instruction 時的考量 | 功能、語氣與角色、資訊來源、fallback 程序。 |
+| 讓回答更準確、相關的 agent 元件 | Custom grounding / custom knowledge。 |
 
-- **Slide 18 Q1**：企業導入 AI agents 的關鍵 business benefit 是 **"Enhancing efficiency by automating routine business processes."**
-  說明：speaker notes 明確指出這才是 core value proposition；增加 manual data entry 或減少跨部門合作都不是正向答案。
+來源：[繁中內容簡報](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx) slides 20–35、[M02 Learn module](https://learn.microsoft.com/en-us/training/modules/build-your-first-agent-microsoft-365-copilot-use-copilot-studio/)。
 
-- **Slide 18 Q2**：AI agents 在 business environment 的核心特徵是 **"They use knowledge, perform actions, and follow instructions to achieve business goals."**
-  說明：這呼應 architecture slide 的 working definition；它們不是單純 data store，也不是每一步都要靠人手動盯著做。
+### M03 - Copilot Studio 中宣告式代理程式工具簡介
 
-- **Slide 18 Q3**：marketing team 用 agent 發送活動提醒且遵循團隊指引，需要的元件是 **"Custom knowledge, skills, and actions."**
-  說明：情境同時需要團隊指引、可重用能力，以及送信等可執行 actions。
+**說明重點**
 
-#### 常見誤區與提醒
-
-- 把 agent 當成「會聊天的 chatbot」；M01 要先把 *does things* 這件事講進去。
-- 把 retrieval / task / autonomous 當成硬分類；speaker notes 已經提醒這是一條 continuum。
-- 一開始就想做最大的 transformation program；Slide 12 明確主張先改善既有流程，不要 boil the ocean。
-- 只念 architecture 名詞，不用同一個例子把 request flow 走一次；這會讓 M02 的平台比較失去落點。
-
-#### 重要連結
-
-- [M01 module page](https://learn.microsoft.com/en-us/training/modules/introduction-develop-ai-agents/)
-- [Agent architecture principles and patterns](https://learn.microsoft.com/en-us/agents/architecture/)
-- [Agent architecture checklist](https://learn.microsoft.com/en-us/agents/architecture/checklist-agent-architecture)
-
-### M02 - Choose tools and services for your agent on Microsoft's agent platform
-
-#### 學習目標
-
-- Identify the appropriate agent development path for a given scenario
-- Identify the publishing paths and channel options for delivering agents to users
-- Match organizational data categories to the appropriate Microsoft IQ service
-- Describe how agents connect to external systems and coordinate with other agents
-- Identify the governance and identity services that support agents
-
-#### 講解重點
-
-- 這一模組是 **identify-and-match module**，不是 build tutorial。重點是「看到需求，就知道該往哪個 platform / service / pattern 走」。
-- Slides 23–29 請用「layers of agent development」來講清楚 Agent Builder、Copilot Studio、Microsoft Foundry 的差別：差別不在行銷定位，而在 **哪些 layers 由平台代管、哪些 layers 由你自己選**。
-- Slides 30–36 要把 **channel = publishing path + governance default** 這件事講明白；不要只講「哪裡可以顯示」。
-- Slides 37–41 強調 **Microsoft IQ family** 是 grounding 的 managed layer，而且要從 data domain 反推 Work IQ / Foundry IQ / Fabric IQ。
-- Slides 42–47 要把 **MCP、connectors、Power Automate、Logic Apps、Functions、OpenAPI、A2A** 放進同一個「agent 如何獲得 agency」框架裡。
-- Slides 48–58 要收斂到 identity / governance：每個 agent 都有身分；Copilot Studio / Microsoft 365 Copilot 有較多 inherited controls，Foundry 則要顯式配置 RBAC、policies、logging。
-
-#### 互動設計
-
-- **Slide 29 — `Discussion`**
-  Prompt 1: **"Which development approach fits your team profile and scenario?"**
-  Prompt 2: **"If you're on the pro-code path, which options at each layer fit your team's existing skills and your agent's requirements?"**
-  Facilitation:
-  - 停下來讓學員 3–5 分鐘討論，再請幾位分享。
-  - speaker notes 特別提醒：注意學員不要 reflexively pattern-match，而沒有真的看 scenario nuance。
-
-- **Slide 36 — `Discussion`**
-  Prompt: **"For the agent you're building or exploring, which channel or channels best fit where your intended users already work?"**
-  Facilitation:
-  - 引導學員先說 target users 在哪裡工作，再說 channel。
-  - 要主動反駁「all channels for maximum reach」這個直覺；speaker notes 已經提醒 governance defaults 與 support burden 會隨 channel 增加而放大。
-
-- **Slide 41 — `Discussion`**
-  Prompt: **"Think about the data your agent will need to reason over. Which IQ service or combination of services fits your scenario?"**
-  Facilitation:
-  - 要求學員把資料講具體，不要說泛泛的「company data」。
-  - speaker notes 點名：很多真實案例會是 Foundry IQ + Work IQ 的組合，而不是單一服務。
-
-- **Slide 47 — `Discussion`**
-  Prompt: **"What external systems will the agent in your scenario need to act on? And does that scenario involve coordinating with other agents?"**
-  Facilitation:
-  - 請學員分開列出 read-from 與 write-to systems，因為治理風險不一樣。
-  - 再追問：這是 Microsoft 內部 native integration 就能處理，還是真的需要 A2A？
-
-- **Slide 53 — `Discussion`**
-  Prompt: **"Based on the development platform you explored, which governance areas require explicit configuration by the development team, and which are inherited by default?"**
-  Facilitation:
-  - 這題的目的不是背控制項，而是讓學員意識到 governance 是 design input。
-  - 講完要收束回：「不是平台比較安全，而是 default inheritance 不同，責任分配不同。」
-
-#### Knowledge Check
-
-- **Slide 54 Q1**：最適合 customer-facing returns agent、multi-step enterprise workflows、custom orchestration、full model control 的平台是 **Microsoft Foundry**。
-  說明：speaker notes 明確點出這是 pro-code developer profile。Copilot Studio 偏 low-code，不提供此情境需要的 custom orchestration / model control；Agent Builder 則更不適合。
-
-- **Slide 54 Q2**：集中式 product catalog / technical specifications / policy documents knowledge base 的 grounding 服務是 **Foundry IQ**。
-  說明：這是 enterprise content / knowledge base 情境；Work IQ 偏 Microsoft 365 activity signals，Fabric IQ 偏 analytical / operational data。
-
-- **Slide 54 Q3**：Foundry agent 沒有 audit logging 或 access controls、Copilot Studio agent 卻有，原因是 **Foundry 需要顯式設定 Azure RBAC、policies、logging；Copilot Studio 會繼承 Microsoft 365 controls**。
-  說明：speaker notes 明確否定「Agent 365 會自動替 Foundry 套上同樣治理」與「只是 SaaS vs PaaS 差異」這兩個說法。
-
-- **Slide 55 Q4**：讓 Copilot Studio agent 進入 Microsoft 365 Copilot 給全員使用的 distribution mechanism 是 **Copilot Control System**。
-  說明：這是 admin-governed publishing path。`Agent Application` 是 Foundry 的 publishing resource；Microsoft 365 Agents SDK 是 pro-code channel / transport layer，不是既有 Copilot Studio agent 的 distribution mechanism。
-
-- **Slide 55 Q5**：要讓 third-party / self-hosted agent 被其他 agents 呼叫，應使用 **registering an incoming A2A endpoint**。
-  說明：A2A 解的是 multi-agent callability across frameworks / platforms；Microsoft 365 Agents SDK 解的是 agent 觸達 Microsoft 365 channels；Copilot Control System 解的是 user distribution。
-
-#### 常見誤區與提醒
-
-- 以為 **Microsoft Foundry 只代表 pro-code**。speaker notes 明說 Foundry 也支援 configuration-based prompt agents。
-- 以為 **channel 只是 UI**。其實 channel 會改變 publishing path 與 governance defaults。
-- 以為 **grounding 只要接一個資料源**。真正的重點是 data domain、freshness、permissions 與 multi-IQ 組合。
-- 把 **MCP** 與 **A2A** 混為一談：MCP 偏 tools / data access；A2A 偏 agent-to-agent coordination。
-- 以為 **Agent 365** 會自動補齊 Foundry 的治理設定；speaker notes 已明確否定。
-- 把 **Agent Builder** 與 **Copilot Studio** 畫上等號；正確說法是 Agent Builder 是 Copilot Studio 的 lite version。
-
-#### 重要連結
-
-- [M02 module page](https://learn.microsoft.com/en-us/training/modules/build-solutions-microsoft-agent-platform/)
-- [Microsoft Foundry overview](https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry)
-- [Copilot Studio overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)
-- [Microsoft 365 Agents Toolkit overview](https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/agents-toolkit-fundamentals)
-- [Microsoft 365 Agents SDK overview](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/agents-sdk-overview)
-- [Microsoft Agent Framework repo](https://github.com/microsoft/agent-framework)
-- [Work IQ overview](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/)
-- [Foundry IQ overview](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq)
-- [Fabric IQ overview](https://learn.microsoft.com/en-us/fabric/iq/overview)
-- [Connect agents to MCP server endpoints](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol)
-- [A2A endpoint guidance](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/agent-to-agent#host-an-a2a-compatible-agent-endpoint)
-- [Microsoft Agent 365 overview](https://learn.microsoft.com/en-us/microsoft-agent-365/overview)
-
-### M03 - Plan an AI agent solution
+- Tool 是可重用 capability；同一個 core tool 可依不同 agent 的 input、output、configuration 包裝。
+- 用問題分類而不是產品名稱帶領選擇：要產生/轉換文字用 prompt tool；要取回或更新外部 API 資料用 connector tool；未被現成 connector 覆蓋的 API 再考慮 REST API；既有 knowledge server 與資料來源可考慮 MCP。
+- 先設計 tool description、authentication、inputs/outputs、Power Platform environment 和 solution，再建 tool。
 
-#### 學習目標
+**討論題**
 
-- Plan business outcomes, requirements, and success metrics for an agent
-- Plan an agent's data sources, workflows, and dependencies
-- Plan an agent's interaction patterns and channels
-- Plan an agent's identity, governance, security, and responsible AI posture
+「你的 agent 需要知道、生成、讀取或更新什麼？哪些動作需要使用者自己的 connection？」把答案分到 knowledge、prompt、connector、MCP，不讓「能做」取代「該做」。
 
-#### 講解重點
+**Knowledge Check 提示**
 
-- 這一模組請明確框成 **planning-first design**，不是 tool training。Slides 60–62 要先讓學員相信：跳過 planning，最後會在 production 用 incident 補課。
-- Slides 64–69 要把 **outcome、scope、handoff conditions、acceptance criteria、baseline metrics** 串成一條線。這裡最重要的訊息是：**metrics are design constraints**，不是上線後才補的 dashboard。
-- Slides 72–78 要把 **data domain、grounding strategy、input → transform → output、deterministic vs generative vs hybrid、modularity、dependencies** 講成同一件事：如何把 agent 的工作拆對。
-- Slides 80–83 要幫學員辨識 **conversational vs autonomous**，並理解 channel 與 cross-agent invocation 是 interaction design，不只是 deployment 細節。
-- Slides 84–90 要把 **identity、least privilege、agent user account、guardrails、lifecycle governance、Responsible AI** 放在同一張 blueprint 上看。
+| 題意 | 正確概念 |
+| --- | --- |
+| 透過 API 擷取與更新外部來源資料 | Connector tool。 |
+| Solution 的主要用途 | 在 environments 間傳輸應用程式與元件，或管理一組自訂項目。 |
+| Prompt tool 如何擴充 agent | 加入可執行的自訂 prompt template 來產生客製文字回應。 |
 
-#### 互動設計
+來源：[繁中內容簡報](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx) slides 37–47、[M03 Learn module](https://learn.microsoft.com/en-us/training/modules/introduction-copilot-studio-actions/)。
 
-- **Slide 70 — `Discussion`**
-  Prompt: **"What does success look like for your agent in concrete terms? And what data exists today to establish a baseline you could measure against?"**
-  Facilitation:
-  - 建議 pair-and-share 5–10 分鐘。
-  - speaker notes 要求你一直追問具體數字：不是 faster / better，而是「哪個 number、怎麼量、跟哪個 baseline 比」。
+### M04 - 在 Copilot Studio 中使用提示詞工具擴充宣告式代理程式
 
-- **Slide 78 — `Try it`**
-  Prompt 1: **"Sketch a workflow for an agent you’re considering building, using input → transform → output."**
-  Prompt 2: **"What triggers the agent?"**
-  Prompt 3: **"What does it read, and from which data domain?"**
-  Prompt 4: **"What produces the result — a response, handoff, record, or notification?"**
-  Prompt 5: **"For each transform step, decide: does it need generative reasoning, or is deterministic logic more reliable and auditable?"**
-  Facilitation:
-  - 讓學員真的畫，不要只口頭講；speaker notes 認為畫出 input → transform → output 最能暴露 design gaps。
-  - 要特別抓「什麼都想用 generative reasoning」這個傾向，主動把 deterministic / auditable step 拉回來。
+**說明重點**
 
-- **Slide 90 — `Discussion`**
-  Prompt 1: **"Which operation pattern does your agent use?"**
-  Prompt 2: **"Does it need an agent’s user account?"**
-  Prompt 3: **"At which intervention points would you place guardrails, and what failure mode is each protecting against?"**
-  Prompt 4: **"Which responsible AI principle presents the highest design risk for this agent, and what decision from this unit addresses it?"**
-  Facilitation:
-  - speaker notes 明確建議只挑 1–2 題，依 audience relevance 決定。
-  - guardrails 這題一定要追問 **named failure mode**，不能接受「這裡加個 guardrail 就好」。
-  - agent user account 這題要講清楚：application permissions 處理 background processing；若場景需要 user-shaped presence（例如 shared mailbox 發信），才需要額外的 agent user account。
+- Prompt tool 是可重用的 custom prompt template，可用於分類、擷取實體、草擬回覆或摘要。
+- 讓每組把「具體指令、範例、簡潔、無法完成時的處理」逐一寫出；只要求「寫一個好 prompt」無法驗收。
+- inputs 是執行時填入實際資料的 placeholders；測試時使用 sample data，查看 model response 後再精煉。
 
-#### Knowledge Check
+**Lab 與活動**
 
-- **Slides 91/92 沒有 authoritative answer 可直接引用。**
-  deck 的 speaker notes 對 Slides 91/92 明確是 **No speaker-note text present in the deck**；題目本身也沒有附答案或解釋。
+- [Lab 2.1 - Create a prompt tool](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/02-Prompt-actions/01-create-prompt-action.html)
+- 以一則 Products 文件回答做範例，產出「摘要、建議下一步、未知資訊」；故意移除必要資料一次，檢查 fallback 是否如預期。
 
-- 因此請嚴格遵守這條：
-  - **不要臨場猜答案。**
-  - **不要把你自己的技術直覺講成官方標準答案。**
-  - **講師必須在授課前，對照當前 source material 重新驗證這 5 題。**
+**Knowledge Check 提示**
 
-- 這 5 題主題分別圍繞：
-  - baseline before success metrics
-  - deterministic vs agentic routing step
-  - autonomous interaction pattern
-  - tool response intervention point
-  - autonomous permissions + agent user account
+| 題意 | 正確概念 |
+| --- | --- |
+| Prompt engineering 的主要目標 | 提供盡可能具體的指示，以取得更相關回覆。 |
+| Prompt inputs 的用途 | 作為 placeholder，在執行階段填入實際資料。 |
+| Prompt tool 的目的 | 以 custom prompt 擴充 agent，產生符合使用者要求的回應。 |
 
-#### 常見誤區與提醒
+來源：[繁中內容簡報](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx) slides 49–59、[M04 Learn module](https://learn.microsoft.com/en-us/training/modules/extend-declarative-agents-prompt-actions-copilot-studio/)。
 
-- 把 planning 當成 paperwork；Slides 61–62 明確指出 outcomes / baselines / boundaries 是 build input。
-- 沒 baseline 就先定 success metrics；speaker notes 直接說這是最常被跳過、也最難事後補回來的設計步驟。
-- 什麼 step 都想用 generative reasoning；Slide 75 明確說 hybrid 往往才是較佳起點。
-- 以為 guardrails 越多越安全；Slide 87 明確提醒每個 control 都有 latency cost，要看 actual exposure。
-- 先加 agent user account 再說；Slide 85 明確提醒這有 licensing 與 policy complexity 成本，不要 speculative。
-- 把 Responsible AI 當 compliance checklist；Slide 89 的正確講法是把原則轉成此 agent 的 design question。
+### M05 - 在 Copilot Studio 中使用連接器工具擴充宣告式代理程式
 
-#### 重要連結
+**說明重點**
 
-- [M03 module page](https://learn.microsoft.com/en-us/training/modules/plan-design-ai-agent-solution/)
-- [Plan your agent identity architecture](https://learn.microsoft.com/en-us/entra/agent-id/how-to-plan-agent-identity-architecture)
-- [Foundry guardrails overview](https://learn.microsoft.com/en-us/azure/foundry/guardrails/guardrails-overview)
-- [Responsible AI for agent design](https://learn.microsoft.com/en-us/agents/design-guidelines/responsible-ai)
+- Connector tool 透過 API 從外部服務取得或更新資料；有現成、進階與自訂 connector，選擇受環境與方案限制。
+- 名稱必須唯一且可辨識；description 使用預期使用者會說的詞，並明寫 action、輸入、輸出，才能幫助 orchestrator 選用正確 tool。
+- Authentication 不只是設定步驟：demo 的 SharePoint connection 必須以使用者 credentials 反映其資料權限。
 
-## 預期學員問題 Q&A
+**Lab 路徑**
 
-### 為什麼這門課沒有 lab？
+1. [Lab 3.1 - Create a connector tool](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/03-Connector-actions/01-create-connector-action.html) — 建立連線與加入工具的流程照這一頁操作。
+2. 在 Add tool 搜尋 `SharePoint`，選擇 **Get items** 動作。
+3. tool name 用 `Get product support cases`；description 明寫可依產品或狀態查詢 Contoso 產品支援案件，並說明預期的輸入與輸出。
+4. Inputs：`Site Address` 指向 demo 站台，`List Name` 選 `Support Cases`。
+5. 建立連線時使用學員自己的帳號，讓 agent 只能取得該使用者有權限的清單資料。
+6. 在 agent instructions 補一句：詢問案件狀態、未結案件或特定產品的支援紀錄時，使用這個 connector tool，並說明資料來自 SharePoint 清單。
+7. 用兩個對照提問驗收：「保固怎麼計算？」應走 M02 的文件 knowledge；「Mark8 目前有哪些未結案件？」應走這個 connector tool。
 
-因為這個版本的 delivery model 本來就不是 lab-first。Trainer Prep Guide 明確寫出：這一版沒有 hands-on lab sequence，課程以 presentation、discussion、brief activities、optional demos 與 Learn follow-up 為主；README 也已經對學員說明目前版本沒有 hands-on lab。
+> 官方 lab 頁面用的是 `List folder` 搭配 `File Identifier = Products`，只回答「有哪些檔案」。本課改用 `Get items` 是刻意調整：清單回傳可查詢的營運資料，「文件回答政策、清單回答即時狀態」的對比才成立。若你拿到的是沒有 seed 過 `Support Cases` 清單的 hosted lab 環境，就照官方 `List folder` 步驟走，其餘教學重點不變。
 
-### 這門課有 Applied Skills 或 exam 嗎？
+清單資料由 [demo-environment.md](demo-environment.md) 的 seeder 建立。
 
-依目前公開 Learn 課程頁，MS-4014 顯示的是 **Achievement Code**；在本次 required source set 與公開課程頁中，沒有列出 Applied Skills 或 exam/certification path。對外請只承諾目前可證實的 **Achievement Code**，不要自行延伸成「有考試」或「有技能認證」。
+**Knowledge Check 提示**
 
-### Copilot Studio、Microsoft Foundry、pro-code 路線怎麼選？
+| 題意 | 正確概念 |
+| --- | --- |
+| 為何 connector tool 要有具描述性的 description | 協助 Microsoft 365 Copilot 與 agent 了解工具功能和使用方式。 |
+| 為自有 API 建置的 connector | Custom connector。 |
+| Connector tool name 的準則 | 唯一且具描述性，說明可執行的動作類型。 |
 
-先看你要控制什麼、團隊會什麼、以及 agent 要跑在哪裡：
+來源：[繁中內容簡報](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx) slides 61–72、[M05 Learn module](https://learn.microsoft.com/en-us/training/modules/extend-declarative-agents-connector-actions-copilot-studio/)。
 
-- **Agent Builder**：no-code，偏個人或小團隊快速起步。
-- **Copilot Studio**：low-code，適合 departmental agents、connectors / workflows、多數 Microsoft 365 周邊情境。
-- **Microsoft Foundry**：當你需要 full model control、custom orchestration、production-grade architecture、direct API path 或 multi-agent backend specialization。
-- **pro-code** 並不只是一個產品；它通常是 Microsoft Foundry + orchestration framework + channel SDK 的組合。
+## 簡報術語與交付修正表
 
-### 舊版材料、舊 playlist、舊 labs 和現在的關係是什麼？
+| 舊字詞或通用投影片 | 交付時使用 | 原因與證據 |
+| --- | --- | --- |
+| `智慧…副駕駛®` 或泛稱 Copilot | **Microsoft 365 Copilot** | 課程目標明確是延伸 Microsoft 365 Copilot，不要泛化成其他 Copilot 產品。 |
+| `宣告式助理` | **宣告式代理程式** | 繁中內容簡報 slide 4 同時出現兩種翻譯；統一 agent 對應「代理程式」。 |
+| `自訂基礎` | **自訂知識（grounding）** | 簡報 slides 9、11、16、34 的概念是以知識來源為回覆提供 grounding；口語說明時用這個可辨識的用語。 |
+| Graph connectors | **Copilot connectors** | Trainer Prep Guide p.2、p.6 明確說明產品重新命名。 |
+| Copilot Studio actions | **agent tools** | Change Log 的 August 2025 minor refresh 明確指定此用語更新。 |
+| Intro slide 12、Conclusion slide 3 的 generic certification 文案 | **跳過或改寫成 Achievement Code** | 這些是通用模板，並不證明 MS-4022 有認證考試；Intro / Conclusion deck 自己標示需依課程客製。 |
 
-它們是 **legacy evidence**，不是 current teaching baseline。July 2026 refresh 已經把課程改成 3 模組、3 小時、discussion-oriented 的新結構；舊 playlist 與舊 labs 都不是這版的核心材料。若你真的要用舊 demo videos，只能把它們當成「歷史補充」，而且要先下載、先驗證、現場清楚標註 **old / not updated for current version**。
+## 預期問題
 
-### Microsoft IQ 到底是在解什麼問題？
+### Knowledge source 和 connector tool 有何差異？
 
-它解的是 grounding 的平台化與 permission-aware access 問題。你不是先選產品，而是先看資料 domain：
+Knowledge source 用文件進行 grounding，回答要以引用與使用者 SharePoint 權限驗證；connector tool 則是為外部 API 的讀取或更新動作建立可呼叫能力。Products scenario 應同時示範兩者，而不是把 connector 當成文件問答的替代品。
 
-- **Work IQ**：Microsoft 365 signals 與工作脈絡
-- **Foundry IQ**：enterprise documents / knowledge bases / structured content
-- **Fabric IQ**：analytical / operational data 的 semantic layer
+### 為何回答沒有立即引用新上傳的文件？
 
-同一個 agent 可能同時用多個 IQ 服務；這是正常設計，不是例外。
+SharePoint ingestion/indexing 是非同步的。資料與 knowledge source 應至少在授課前一天建立，再用兩個不同類型的問題驗證 citation；不要在課堂上承諾即時完成索引。
 
-### 為什麼還沒 build，就一直談 governance、identity、least privilege？
+### 為何 connector tool 需要清楚的 description？
 
-因為這些不是 implementation polish，而是 architecture input。agent 要不要 autonomous、要不要 agent user account、哪裡需要 guardrails、哪些 permissions 可接受、誰是 sponsor / owner，都會反過來影響 channel、workflow、data access 與 rollout 方式。晚談，通常就代表你要用事故或 rework 來補。
+Orchestrator 必須能將使用者意圖配對到正確 tool。抽象名稱或空泛 description 會使工具雖已建立卻難以被選用；M05 的 KC 直接驗證這個概念。
 
-## 課前準備清單（開課前 1–2 天）
+### 是否可以直接把 app-only seeder secret 用於 Copilot Studio connector？
 
-- [ ] 重新看一次 **Change Log**，確認自己講的是 **July 2026 major refresh** 的 3 模組版本。
-- [ ] 重新看一次 **PowerPoint deck** 與 speaker notes，特別標出 Slides 8 / 13 / 29 / 36 / 41 / 47 / 53 / 70 / 78 / 90 / 91 / 92。
-- [ ] 重新確認本文件中引用的官方 Learn / GitHub 連結仍對應到 current content；若 Learn 頁面標題或結構已變，先更新再開課。
-- [ ] 決定你要不要做 **live portal demos**；若要做，只挑 1–2 個最能說明差異的畫面，不要臨場探索。
-- [ ] 若要使用舊 demo videos，請 **先下載**、先測試可播放，並在講義或口頭上明確說明那是 **legacy / old**，不是 current workflow。
-- [ ] 確認 **ESI logistics**：issued schedule、LxP / survey 流程、遠距或實體上課的 chat / 白板 / 分組方式。
-- [ ] 提前驗證 **Knowledge Check Slides 91/92** 的答案來源；如果還沒驗證完，先決定要把它們當課後 review，而不是課內標準答案題。
-- [ ] 檢查你準備示範的 current terminology 是否一致：Microsoft Foundry、Foundry Agent Service、Microsoft 365 Agents Toolkit、Copilot connectors、Microsoft Agent Framework。
+不可以。Seeder 的 app-only credential 只用於課前建立 demo data；connector 應使用使用者 connection，才能反映使用者資料權限並避免把 secret 帶入 agent 設定。
 
-## 講師小技巧
+### 那 Copilot Studio 的 workflows / agent flows 呢？
 
-- **不要讀投影片**：Trainer Prep Guide 已明說，slides 與 imported graphics 只是 anchor。你要補的是 What / Why / How，不是逐字朗讀。
-- **用同一個 customer scenario 貫穿三模組**：M01 定義 agent、M02 選平台與服務、M03 畫 blueprint，全都用同一個 scenario，學員最容易跟得住。
-- **先蒐集痛點，再回勾**：Slide 8 收到的例子，後面在 M02 platform choice、M03 success metrics 時再拿回來用，學員會感覺整堂課是連續的。
-- **時間不夠時，先砍 share-out，不先砍思路**：chat waterfall、pair-share、舉手投票都能省時間；但不要因為趕時間就跳過 baseline、workflow、identity 的關鍵邏輯。
-- **demo 的最佳範圍是「看懂差異」，不是「從零做到完」**：最值得 demo 的通常是 Agent Builder / Copilot Studio / Microsoft Foundry 的界面差異、publishing path、Agent Application、IQ / guardrails / identity 的位置，而不是 live build。
-- **對 Slides 91/92 保持紀律**：未驗證就不公布標準答案，這比講錯還專業。
+本課的宣告式代理程式只支援 prompt tool 與 connector tool；**agent flows 與 computer use 不支援宣告式代理程式**，那是自訂代理程式的路線。Trainer Prep Guide 的 common misconceptions 已明列這一點，M03 也會講到。學員若追問自動化情境，可用下列講師背景資料補充，但不要把它當成本課的 lab 路徑：
 
-## 參考
+[Power Hour: Reimagine Automation with Copilot Studio Workflows（隨選錄影）](https://info.microsoft.com/AA-AccLC-VDEO-FY27-07Jul-30-Power-Hour-Reimagine-Automation-with-Copilot-Studio-Workflows-SREVM94772_LP02-Thank-You---Standard-Hero.html)
 
-- [Learning path (EN)](https://learn.microsoft.com/en-us/training/paths/build-foundation-extend-microsoft-365-copilot/)
-- [Learning path (ZH-TW)](https://learn.microsoft.com/zh-tw/training/paths/build-foundation-extend-microsoft-365-copilot/)
-- [M01 module page](https://learn.microsoft.com/en-us/training/modules/introduction-develop-ai-agents/)
-- [M02 module page](https://learn.microsoft.com/en-us/training/modules/build-solutions-microsoft-agent-platform/)
-- [M03 module page](https://learn.microsoft.com/en-us/training/modules/plan-design-ai-agent-solution/)
-- [學員版 README](../README.md)
-- [版本差異說明](version-change-notes.md)
+> 這是行銷活動資產，不是 Learn 文件：網址帶 FY27 campaign ID、頁面標題仍含未取代的 `[REPLACE]` 佔位符，隨時可能失效或改版。學員版 README 把它與 Copilot Studio blog 一起放在 `## Links` 的 `### Beyond this course` 群組，刻意與五個模組的參考索引分開；`## Videos` 仍只收官方 YouTube 頻道。開課前請先自行確認仍可播放。
+
+## 開課前檢核
+
+- [ ] 重跑 [README](../README.md) 連結帳本，確認 Learn、labs 與影片仍可用。
+- [ ] 閱讀最新 [Change Log](../PPT/MS-4022-ENU-ChangeLog.pdf)，特別確認 UI、labs 與 tool terminology 是否再次更新。
+- [ ] 掃描 [Copilot Studio blog](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/) 的近期公告，確認沒有影響 demo 或 lab 的產品變更。
+- [ ] 自行完成 Lab 1.1、1.2、1.3、2.1、3.1；記錄任何 UI 差異與可行替代路徑。
+- [ ] 至少一天前依 [demo-environment.md](demo-environment.md) 建立 Products 資料與 SharePoint knowledge source，並驗證 citation。
+- [ ] 確認 Power Platform environment、solution、Microsoft 365 Copilot 授權與 target users 的 SharePoint permissions。
+- [ ] 測試 prompt tool 的正常與無資料輸入；測試 connector tool 的 authorized 與 unauthorized user 結果。
+- [ ] 將 Intro slide 1、Intro slide 4、Intro slide 8、Intro slide 10、Intro slide 12、Conclusion slide 1、Conclusion slide 3 依本班資訊客製或刪除模板備註。
+- [ ] 準備 product UI 改版時的教學策略：先讓學員辨認功能名稱與目的，再協助定位，不強迫畫面必須與 lab 截圖一致。
+
+## 授課技巧
+
+- 不要逐字念投影片。Trainer Prep Guide 要求講師補上「what、why、how」，而非朗讀 bullet points。
+- 用同一個 Product Support 案例貫穿五模組：M01 判斷適合性、M02 建 agent、M03 選 tool、M04 格式化回覆、M05 列出檔案。
+- KC 可分散於相應內容中，不必等模組末才集中進行；若學員挑戰答案，回到對應 slide 的概念與 lab 行為，而不是憑記憶辯論。
+- UI 與 lab 指引不同時，先要求學員描述他們要找的 capability；僅在真的卡住時介入。官方 Trainer Prep Guide 明確提醒雲端產品 UI 會持續變動。
+- 最後的討論不要問「喜不喜歡課程」；請每位學員說出一個要帶回工作中的 knowledge、prompt 或 connector 假設，以及要如何驗證它。
+
+## 來源
+
+- [MS-4022 Trainer Preparation Guide](../PPT/MS-4022-ENU-TrainerPrepGuide.pdf)
+- [MS-4022 Change Log](../PPT/MS-4022-ENU-ChangeLog.pdf)
+- [MS-4022 Traditional Chinese content deck](../PPT/MS-4022-PowerPoint-Content.zh-TW.pptx)
+- [MS-4022 Intro deck](../PPT/MS-4022-ENU-PowerPoint-Intro.pptx)
+- [MS-4022 Conclusion deck](../PPT/MS-4022-ENU-PowerPoint-Conclusion.pptx)
+- [Official MicrosoftLearning lab repository](https://github.com/MicrosoftLearning/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio)

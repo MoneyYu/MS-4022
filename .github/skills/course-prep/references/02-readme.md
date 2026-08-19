@@ -18,8 +18,9 @@ rationale, no Terraform, no internal notes. Those live in `docs/` (Phase 6 and
 1. **Front-matter + title + one-paragraph intro** — what the course teaches, in plain language.
 2. **`## Course`** — `:::success` with the per-instance metadata: **Date** (`YYYYMMDD`),
    **Course ID** (the numeric ESI delivery id). `:::info` with the **Course Survey** link.
-3. **`## Course Materials`** — the Microsoft Learn learning-path links (EN / `zh-cn` / `zh-tw`) and
-   the Learn course page.
+3. **`## Course Materials`** — the top-level Microsoft Learn course page for each locale
+   (EN / `zh-cn` / `zh-tw`). Do **not** also list the learning-path links: the course page already
+   links its learning path, so listing both puts two links to the same destination on the page.
 4. **`## Infos`** — LxP portal (`esi.microsoft.com`) and ESI support links.
 5. **`## Lab`**
    - **Skillable**: ESI Labs link + `:::success` **Training key** + `:::info` redeem-once / valid
@@ -37,7 +38,9 @@ rationale, no Terraform, no internal notes. Those live in `docs/` (Phase 6 and
 8. **`## Mind Map`** — a ```` ```markmap ```` overview representing the course outline in the
    structural style used by `MoneyYu/AI-901`. See **Mind map** below.
 9. **`## Exam & Credential`** — official exam, certification, and study-guide links when the
-   course maps to a credential. Use the standalone-link formatting contract below.
+   course maps to a credential. Use the standalone-link formatting contract below. **Omit this
+   section entirely** when the course has no exam, certification, or Applied Skills mapping — do
+   not leave an empty placeholder.
 10. **`## Contact`** — course-owner contact details, following the sibling-repo convention.
 
 ## Per-instance metadata to refresh every delivery
@@ -61,8 +64,11 @@ update them and nothing else when only re-running the same course.
 module list. If the course publishes explicit Learning Paths, use a `### LPx - <path name>` heading
 and `#### Mxx - <module name>` beneath it; otherwise use `### Mxx - <module name>`. Do **not** add
 a generic `Foundations`, service, or resource category unless it is an official part of the course
-outline. Inside each module, lead with the Microsoft Learn **module** page, then only supporting
-concept/how-to pages that map directly to that module's objectives.
+outline. The only permitted non-module group is the optional `### Beyond this course` set described
+below. Inside each module, list only supporting
+concept/how-to pages that map directly to that module's objectives. Do **not** add the module's own
+Microsoft Learn **module** page: `## Course Materials` already links the course, so a per-module
+module link duplicates that navigation.
 
 **Source and relevance contract**
 - Official sources only: Microsoft Learn/product documentation, official Microsoft/GitHub
@@ -70,6 +76,11 @@ concept/how-to pages that map directly to that module's objectives.
 - Prefer the exact product/concept/how-to page over a generic product hub.
 - Do not add blogs, Q&A, community posts, third-party tutorials, pricing pages, or links included
   merely because they mention the same product.
+- **Exception — `### Beyond this course`.** The course owner may curate a few Microsoft-owned
+  current-awareness links that fall outside the module objectives, such as the product blog or an
+  on-demand session recording. Put them in one clearly labeled non-module group at the end of
+  `## Links`, never inside a module section, and add a `:::info` line saying why they sit outside
+  the course. Campaign URLs rot quickly, so re-verify this group before every delivery.
 - A supporting link belongs under exactly the module that teaches it. Do not use a related topic
   as filler in a neighboring module.
 
@@ -78,14 +89,12 @@ concept/how-to pages that map directly to that module's objectives.
 ```markdown
 ### LP1 - <learning path>
 #### M01 - <module name>
-[Microsoft Learn Module](https://learn.microsoft.com/...)
-
 [Directly relevant official reference](https://learn.microsoft.com/...)
 
 [Another directly relevant official reference](https://learn.microsoft.com/...)
 
 #### M02 - <module name>
-[Microsoft Learn Module](https://learn.microsoft.com/...)
+[Directly relevant official reference](https://learn.microsoft.com/...)
 ```
 
 - The first link is on the line immediately after its heading: **no blank line after a heading**.
@@ -144,7 +153,7 @@ official course outline or the user requests it. Use a 3-column table:
 
 ## Mind map
 
-Add a `## Mind Map` near the end, followed by `## Exam & Credential` and `## Contact`, like
+Add a `## Mind Map` near the end, followed by the optional `## Exam & Credential` and `## Contact`, like
 `MoneyYu/AI-901`. It is a single ```` ```markmap ```` fenced block (HackMD renders it).
 
 **Structure**
@@ -190,7 +199,6 @@ Before accepting the README:
 
 ```powershell
 $lines = Get-Content .\README.md
-$sectionNames = @('Course Materials', 'Infos', 'Links', 'Exam & Credential')
 $documentHeadings = @()
 $inFence = $false
 for ($lineIndex = 0; $lineIndex -lt $lines.Count; $lineIndex++) {
@@ -212,7 +220,6 @@ $requiredOrder = @(
     'Lab',
     'Links',
     'Mind Map',
-    'Exam & Credential',
     'Contact'
 )
 $positions = @{}
@@ -232,11 +239,21 @@ for ($i = 1; $i -lt $requiredOrder.Count; $i++) {
     }
 }
 
+# Exam & Credential is optional. When present it may only sit between Mind Map and Contact.
 $afterMindMap = @($documentHeadings |
     Where-Object LineNumber -gt $positions['Mind Map'] |
     ForEach-Object Line)
-if (($afterMindMap -join '|') -ne '## Exam & Credential|## Contact') {
-    throw 'Only ## Exam & Credential and ## Contact may follow ## Mind Map.'
+if (($afterMindMap -join '|') -notin @('## Contact', '## Exam & Credential|## Contact')) {
+    throw 'Only an optional ## Exam & Credential followed by ## Contact may come after ## Mind Map.'
+}
+
+$sectionNames = @('Course Materials', 'Infos', 'Links')
+$credentialHeading = $documentHeadings |
+    Where-Object Line -eq '## Exam & Credential' |
+    Select-Object -First 1
+if ($credentialHeading) {
+    $positions['Exam & Credential'] = $credentialHeading.LineNumber
+    $sectionNames += 'Exam & Credential'
 }
 
 foreach ($sectionName in $sectionNames) {
