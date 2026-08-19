@@ -1,5 +1,5 @@
 {
-  "mcpServers": {
+  "servers": {
     "microsoft/playwright-mcp": {
       "type": "stdio",
       "command": "npx",
@@ -32,5 +32,13 @@
       "type": "http",
       "url": "https://learn.microsoft.com/api/mcp"
     }
-  }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "CONTEXT7_API_KEY",
+      "description": "Context7 API key",
+      "password": true
+    }
+  ]
 }
