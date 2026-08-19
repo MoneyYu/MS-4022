@@ -1,0 +1,12 @@
+{
+  "sites": [
+    {
+      "alias": "ms4022-productsupport-{{DATE}}",
+      "displayName": "MS-4022 - Product support - {{DATE}}",
+      "description": "MS-4022 Product Support declarative agent knowledge source.",
+      "owners": ["Admin"],
+      "members": ["DemoUser"],
+      "documents": []
+    }
+  ]
+}
