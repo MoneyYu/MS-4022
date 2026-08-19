@@ -22,7 +22,7 @@
   .\.venv\Scripts\python.exe .github\skills\course-prep\scripts\link_check.py course-scratch\urls.txt
   ```
 
-- Do not retain generic hub redirects, dead links, broken localized repositories, or retired delivery links. The former `aka.ms/ms4022survey` link is invalid; delivery metadata must be refreshed before each class.
+- Do not retain generic hub redirects, dead links, broken localized repositories, or retired delivery links. `aka.ms/ms4022survey` resolves to a delivery-specific survey, so re-verify it together with Date, Course ID, and Training key before each class.
 - Treat Change Log, Trainer Prep Guide, current Learn pages, lab instructions, and current slides as evidence. Cite the source for version-sensitive trainer guidance.
 
 ## Terminology and slide handling

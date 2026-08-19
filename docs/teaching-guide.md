@@ -218,10 +218,19 @@ Orchestrator 必須能將使用者意圖配對到正確 tool。抽象名稱或�
 
 不可以。Seeder 的 app-only credential 只用於課前建立 demo data；connector 應使用使用者 connection，才能反映使用者資料權限並避免把 secret 帶入 agent 設定。
 
+### 那 Copilot Studio 的 workflows / agent flows 呢？
+
+本課的宣告式代理程式只支援 prompt tool 與 connector tool；**agent flows 與 computer use 不支援宣告式代理程式**，那是自訂代理程式的路線。Trainer Prep Guide 的 common misconceptions 已明列這一點，M03 也會講到。學員若追問自動化情境，可用下列講師背景資料補充，但不要把它當成本課的 lab 路徑：
+
+[Power Hour: Reimagine Automation with Copilot Studio Workflows（隨選錄影）](https://info.microsoft.com/AA-AccLC-VDEO-FY27-07Jul-30-Power-Hour-Reimagine-Automation-with-Copilot-Studio-Workflows-SREVM94772_LP02-Thank-You---Standard-Hero.html)
+
+> 這是行銷活動資產，不是 Learn 文件：網址帶 FY27 campaign ID、頁面標題仍含未取代的 `[REPLACE]` 佔位符，隨時可能失效或改版。學員版 README 把它與 Copilot Studio blog 一起放在 `## Links` 的 `### Beyond this course` 群組，刻意與五個模組的參考索引分開；`## Videos` 仍只收官方 YouTube 頻道。開課前請先自行確認仍可播放。
+
 ## 開課前檢核
 
 - [ ] 重跑 [README](../README.md) 連結帳本，確認 Learn、labs 與影片仍可用。
 - [ ] 閱讀最新 [Change Log](../PPT/MS-4022-ENU-ChangeLog.pdf)，特別確認 UI、labs 與 tool terminology 是否再次更新。
+- [ ] 掃描 [Copilot Studio blog](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/) 的近期公告，確認沒有影響 demo 或 lab 的產品變更。
 - [ ] 自行完成 Lab 1.1、1.2、1.3、2.1、3.1；記錄任何 UI 差異與可行替代路徑。
 - [ ] 至少一天前依 [demo-environment.md](demo-environment.md) 建立 Products 資料與 SharePoint knowledge source，並驗證 citation。
 - [ ] 確認 Power Platform environment、solution、Microsoft 365 Copilot 授權與 target users 的 SharePoint permissions。
