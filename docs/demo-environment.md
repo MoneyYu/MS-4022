@@ -33,7 +33,8 @@ Set-Location .\seed-data\scenarios\ms4022-productsupport
 - private group alias：`ms4022-productsupport-20260819`
 - site display name：`MS-4022 - Product support - 20260819`
 - named document library：`Products`
-- library 內含官方 lab `Products.zip` 解出的範例檔案
+- library 內含官方 lab `Products.zip` 解出的範例檔案，以及 `Eagle Air Product Roadmap.xlsx`
+- named list：`Support Cases`，內含範例支援案件資料列
 - `Admin` 是 group owner，`DemoUser` 是 private group member
 
 以 SharePoint UI 使用 `roles.Admin.upn` 與 `roles.DemoUser.upn` 驗證 site 與文件庫可開啟。重跑同一日期時，runner 會重用已驗證的 private Unified group、補齊 config 宣告的 owner/member、尋找既有 `Products` library，並重新上傳檔案。只有要隔離全新班次時才換日期。
@@ -78,6 +79,8 @@ Set-Location .\seed-data\scenarios\ms4022-productsupport
 
 Connector tool 的核心是藉 API 取得或更新外部資料；名稱與 description 會協助 orchestration 決定何時與如何使用 tool。[Lab 3.1](https://microsoftlearning.github.io/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/Instructions/Labs/03-Connector-actions/01-create-connector-action.html)、[Use connectors in Copilot Studio agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-connectors)。
 
+若要示範查詢營運資料而非列出檔案，改用 SharePoint connector 的 **Get items** 動作指向 `Support Cases` 清單，並在 description 寫明可依產品或狀態查詢案件。這樣 M02 的文件 grounding 與 M05 的 connector tool 各自回答不同類型的問題，學員比較容易分辨何時該用 knowledge、何時該用 tool。
+
 ## 發佈與授課前驗證
 
 1. Publish agent 至 Microsoft 365 Copilot，並依租用戶治理流程完成 admin review / availability 設定。
@@ -94,3 +97,4 @@ Connector tool 的核心是藉 API 取得或更新外部資料；名稱與 descr
 | 發佈 | agent 在目標 demo 帳號的 Microsoft 365 Copilot 可見且可互動。 |
 
 授課後，刪除或封存日期化 demo group、撤銷不再需要的 app secret，並保留不含機密的授課觀察記錄。
+

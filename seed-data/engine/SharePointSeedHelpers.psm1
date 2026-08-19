@@ -104,5 +104,50 @@ function Get-GroupRelationshipUri {
     return "https://graph.microsoft.com/v1.0/groups/$GroupId/${Relationship}?`$select=id"
 }
 
-Export-ModuleMember -Function New-DocumentLibraryPayload, Get-DocumentUploadUri, Assert-ExpectedDemoGroup, Get-MissingDirectoryObjectUris, Get-PagedGraphValues, New-GroupCreatePayload, Get-GroupRelationshipUri
+function New-ListPayload {
+    param(
+        [Parameter(Mandatory)][string]$ListName,
+        [string]$Description,
+        [Parameter(Mandatory)][object[]]$Columns
+    )
+
+    return @{
+        displayName = $ListName
+        description = $Description
+        columns     = @($Columns)
+        list        = @{ template = "genericList" }
+    }
+}
+
+function Get-MissingListItems {
+    param(
+        [object[]]$DesiredItems,
+        [object[]]$ExistingItems,
+        [Parameter(Mandatory)][string]$KeyField
+    )
+
+    $existingKeys = @($ExistingItems | ForEach-Object { $_.fields.$KeyField })
+    $seenKeys = @{}
+    return @($DesiredItems | Where-Object {
+        $key = $_.$KeyField
+        if ($existingKeys -contains $key -or $seenKeys.ContainsKey($key)) {
+            return $false
+        }
+        $seenKeys[$key] = $true
+        return $true
+    })
+}
+
+function Get-ListItemsUri {
+    param(
+        [Parameter(Mandatory)][string]$SiteId,
+        [Parameter(Mandatory)][string]$ListId
+    )
+
+    return "https://graph.microsoft.com/v1.0/sites/$SiteId/lists/${ListId}/items?`$expand=fields"
+}
+
+Export-ModuleMember -Function New-DocumentLibraryPayload, Get-DocumentUploadUri, Assert-ExpectedDemoGroup, Get-MissingDirectoryObjectUris, Get-PagedGraphValues, New-GroupCreatePayload, Get-GroupRelationshipUri, New-ListPayload, Get-MissingListItems, Get-ListItemsUri
+
+
 

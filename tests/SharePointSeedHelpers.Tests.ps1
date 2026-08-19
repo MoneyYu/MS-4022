@@ -144,5 +144,35 @@ Describe "SharePoint seed helpers" {
         $ownersUri | Should Be 'https://graph.microsoft.com/v1.0/groups/group-id/owners?$select=id'
         $membersUri | Should Be 'https://graph.microsoft.com/v1.0/groups/group-id/members?$select=id'
     }
+
+    It "builds a generic list payload that keeps its columns as an array" {
+        $columns = @(@{ name = "Product"; text = @{} })
+
+        $payload = New-ListPayload -ListName "Support Cases" -Description "Product support cases" -Columns $columns
+        $json = $payload | ConvertTo-Json -Depth 20 -Compress
+
+        $payload.displayName | Should Be "Support Cases"
+        $payload.list.template | Should Be "genericList"
+        $json | Should Match '"columns":\['
+    }
+
+    It "returns only list items whose key value is missing" {
+        $desired = @(
+            [pscustomobject]@{ Title = "CASE-1001" },
+            [pscustomobject]@{ Title = "CASE-1002" },
+            [pscustomobject]@{ Title = "CASE-1002" }
+        )
+        $existing = @([pscustomobject]@{ fields = [pscustomobject]@{ Title = "CASE-1001" } })
+
+        $missing = Get-MissingListItems -DesiredItems $desired -ExistingItems $existing -KeyField "Title"
+
+        (@($missing.Title) -join ",") | Should Be "CASE-1002"
+    }
+
+    It "builds the list items URI with the expanded fields query" {
+        $uri = Get-ListItemsUri -SiteId "site-id" -ListId "list-id"
+
+        $uri | Should Be 'https://graph.microsoft.com/v1.0/sites/site-id/lists/list-id/items?$expand=fields'
+    }
 }
 

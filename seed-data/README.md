@@ -1,6 +1,8 @@
 # MS-4022 Product Support demo seeder
 
-此工具會將官方 lab 的 Products 範例資料上傳到日期化的私人 Microsoft 365 Group site，供 Product Support 宣告式代理程式作為 SharePoint knowledge source 與 connector tool 的資料來源。
+此工具會將官方 lab 的 Products 範例資料上傳到日期化的私人 Microsoft 365 Group site，並建立一份 `Support Cases` 清單，供 Product Support 宣告式代理程式作為 SharePoint knowledge source 與 connector tool 的資料來源。
+
+文件與清單各自對應不同的教學重點：文件回答政策與規格類問題（knowledge grounding），清單提供可查詢的營運資料（connector tool）。
 
 ## 安全邊界
 
@@ -20,7 +22,7 @@
 | `Group.ReadWrite.All` | 查詢或建立 Microsoft 365 Group，並設定 owner / member。 |
 | `User.Read.All` | 由 `roles.Admin.upn` 與 `roles.DemoUser.upn` 解析 owner / member 的 Entra user ID。 |
 | `Sites.Read.All` | 輪詢 `GET /groups/{id}/sites/root` 直到 group 的 SharePoint site 可用。 |
-| `Sites.Manage.All` | 在已建立的 site 建立 `Products` document library。 |
+| `Sites.Manage.All` | 在已建立的 site 建立 `Products` document library 與 `Support Cases` 清單，並新增清單項目。 |
 | `Files.ReadWrite.All` | 將 lab 的 Products 檔案上傳至 document library drive。 |
 
 `GET /groups/{id}/sites/root` 的 app-only 最小權限是 `Sites.Read.All`。[官方 Graph site 文件](https://learn.microsoft.com/en-us/graph/api/site-get?view=graph-rest-1.0) 也列出這個 group site 路徑。以上權限對應的程式證據分別在 [Invoke-SeedSharePoint.ps1](engine/Invoke-SeedSharePoint.ps1) 的 `/groups`、`/users`、`/sites/.../lists` 與 `/drives/.../content` 呼叫。權限或租用戶原則拒絕時，runner 會停止並保留 Graph 錯誤，請勿改以使用者帳密繞過。
@@ -69,5 +71,8 @@ Copy-Item .\config.json.example .\config.json
 2. 有命名為 `Products` 的文件庫，且含 Products 範例檔案。
 3. `roles.Admin.upn` 對該私人 site 具有 owner 存取權。
 4. `roles.DemoUser.upn` 對該私人 site 具有 member 存取權。
+5. 有名為 `Support Cases` 的清單，且含範例案件資料列。
+
+Graph 建立的文件庫與清單不會自動出現在站台左側導覽。若希望上課時一眼可見，請在站台手動編輯導覽，加入 `/Products` 與 `/Lists/Support Cases` 兩個連結；這一步無法用目前的 Graph-only 權限自動完成。
 
 接續的 Copilot Studio 設定與驗證步驟位於 [../docs/demo-environment.md](../docs/demo-environment.md)。

@@ -158,6 +158,44 @@ function Upload-Document {
     Write-Host "Uploaded: $targetFilename" -ForegroundColor Green
 }
 
+function Get-OrCreate-SiteList {
+    param(
+        [Parameter(Mandatory)][string]$SiteId,
+        [Parameter(Mandatory)]$ListConfig
+    )
+
+    $lists = Invoke-SeedGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/sites/$SiteId/lists"
+    $existing = $lists.value | Where-Object { $_.displayName -eq $ListConfig.displayName } | Select-Object -First 1
+    if ($existing) {
+        return $existing.id
+    }
+
+    Write-Host "Creating list: $($ListConfig.displayName)" -ForegroundColor Cyan
+    $payload = New-ListPayload -ListName $ListConfig.displayName -Description $ListConfig.description -Columns @($ListConfig.columns)
+    return (Invoke-SeedGraphRequest -Method POST -Uri "https://graph.microsoft.com/v1.0/sites/$SiteId/lists" -Body $payload).id
+}
+
+function Add-ListItems {
+    param(
+        [Parameter(Mandatory)][string]$SiteId,
+        [Parameter(Mandatory)][string]$ListId,
+        [Parameter(Mandatory)]$ListConfig
+    )
+
+    $getPage = { param($uri) Invoke-SeedGraphRequest -Method GET -Uri $uri }
+    $itemsUri = Get-ListItemsUri -SiteId $SiteId -ListId $ListId
+    $existingItems = Get-PagedGraphValues -InitialUri $itemsUri -GetPage $getPage
+    $missingItems = Get-MissingListItems -DesiredItems @($ListConfig.items) -ExistingItems $existingItems -KeyField $ListConfig.keyField
+    foreach ($item in $missingItems) {
+        $fields = @{}
+        foreach ($property in $item.PSObject.Properties) {
+            $fields[$property.Name] = $property.Value
+        }
+        Invoke-SeedGraphRequest -Method POST -Uri "https://graph.microsoft.com/v1.0/sites/$SiteId/lists/$ListId/items" -Body @{ fields = $fields } | Out-Null
+        Write-Host "Added list item: $($item.($ListConfig.keyField))" -ForegroundColor Green
+    }
+}
+
 foreach ($siteConfig in $seedData.sites) {
     $group = Get-OrCreate-Group -Site $siteConfig
     $site = Wait-ForSite -GroupId $group.id
@@ -173,7 +211,13 @@ foreach ($siteConfig in $seedData.sites) {
         }
         Upload-Document -SiteId $site.id -DriveId $driveId -Document $document
     }
+
+    foreach ($listConfig in $siteConfig.lists) {
+        $listId = Get-OrCreate-SiteList -SiteId $site.id -ListConfig $listConfig
+        Add-ListItems -SiteId $site.id -ListId $listId -ListConfig $listConfig
+    }
 }
+
 
 
 

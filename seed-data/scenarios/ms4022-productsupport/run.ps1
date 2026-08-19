@@ -29,6 +29,8 @@ function Get-ScenarioSourcePaths {
 if ($WhatIf) {
     Write-Output "Would create $siteAlias ($siteName)."
     Write-Output "Would create the Products document library and upload the official lab sample files."
+    $listNames = @((Get-Content (Join-Path $scenarioRoot "sharepoint-sites.json") -Raw | ConvertFrom-Json).sites[0].lists.displayName)
+    Write-Output "Would create the $($listNames -join ', ') list with its sample rows."
     return
 }
 
@@ -44,6 +46,11 @@ if (-not (Test-Path $productSourceDir)) {
     New-Item -ItemType Directory -Path (Split-Path $sourcePaths.ZipPath -Parent) -Force | Out-Null
     Invoke-WebRequest -Uri "https://github.com/MicrosoftLearning/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/raw/refs/heads/master/Allfiles/Products.zip" -OutFile $sourcePaths.ZipPath
     Expand-Archive -Path $sourcePaths.ZipPath -DestinationPath $productSourceDir -Force
+}
+
+$roadmapPath = Join-Path $productSourceDir "Eagle Air Product Roadmap.xlsx"
+if (-not (Test-Path $roadmapPath)) {
+    Invoke-WebRequest -Uri "https://github.com/MicrosoftLearning/MS-4022-Extend-Microsoft-365-Copilot-in-Copilot-Studio/raw/refs/heads/master/Allfiles/Eagle%20Air%20Product%20Roadmap.xlsx" -OutFile $roadmapPath
 }
 
 $template = Get-Content (Join-Path $scenarioRoot "sharepoint-sites.json") -Raw

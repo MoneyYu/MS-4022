@@ -26,4 +26,22 @@ Describe "MS-4022 Product Support demo seeder" {
         $paths.ProductSourceDir | Should Be (Join-Path "C:\demo" "custom\Products")
         $paths.ZipPath | Should Be (Join-Path "C:\demo\custom" "Products.zip")
     }
+
+    It "defines a Support Cases list with sample rows in the scenario" {
+        $scenarioRoot = Split-Path $runnerPath -Parent
+        $seedData = Get-Content (Join-Path $scenarioRoot "sharepoint-sites.json") -Raw | ConvertFrom-Json
+        $list = $seedData.sites[0].lists | Where-Object displayName -eq "Support Cases"
+
+        $list | Should Not BeNullOrEmpty
+        $list.keyField | Should Be "Title"
+        @($list.columns).Count | Should BeGreaterThan 3
+        @($list.items).Count | Should BeGreaterThan 4
+    }
+
+    It "mentions the Support Cases list in WhatIf mode" {
+        $output = & $runnerPath -WhatIf -Date "20260819" 2>&1 | Out-String
+
+        $output | Should Match "Support Cases"
+    }
 }
+
