@@ -241,7 +241,7 @@ Orchestrator 必須能將使用者意圖配對到正確 tool。抽象名稱或�
 ## 授課技巧
 
 - 不要逐字念投影片。Trainer Prep Guide 要求講師補上「what、why、how」，而非朗讀 bullet points。
-- 用同一個 Product Support 案例貫穿五模組：M01 判斷適合性、M02 建 agent、M03 選 tool、M04 格式化回覆、M05 列出檔案。
+- 用同一個 Product Support 案例貫穿五模組：M01 判斷適合性、M02 建 agent、M03 選 tool、M04 格式化回覆、M05 查詢支援案件。
 - KC 可分散於相應內容中，不必等模組末才集中進行；若學員挑戰答案，回到對應 slide 的概念與 lab 行為，而不是憑記憶辯論。
 - UI 與 lab 指引不同時，先要求學員描述他們要找的 capability；僅在真的卡住時介入。官方 Trainer Prep Guide 明確提醒雲端產品 UI 會持續變動。
 - 最後的討論不要問「喜不喜歡課程」；請每位學員說出一個要帶回工作中的 knowledge、prompt 或 connector 假設，以及要如何驗證它。
